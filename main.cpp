@@ -613,7 +613,7 @@ bool rule14(const vector<string>& svec, unsigned index) {
 
 bool analyze(const vector<string>& svec, unsigned index) {
 	// TODO: analyze string and call the according rules
-	rule1(svec, index)
+
 }
 
 int main(int argc, char** argv) {
@@ -629,7 +629,7 @@ int main(int argc, char** argv) {
 	   cout << word_parts[i] << " ";
 	cout << endl;
 
-	cout << "Word accepted? " << analyze(word_parts, 0) << endl;
+	cout << "Word accepted? " << (rule14(word_parts, 0) ? "Yes" : "No") << endl;
 
 	return 0;
 }
