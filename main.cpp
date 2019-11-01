@@ -471,49 +471,140 @@ bool rule12(const vector<string>& svec, unsigned index) {
 }
 
 pair<bool, unsigned> rule13(const vector<string>& svec, unsigned index) {
-	
 	// checking rule 11 and 6
-	bool rule11_a = rule11(svec, index);
+	pair<bool, unsigned> rule11_a = rule11(svec, index);
 	bool rule11_accepts = rule11_a.first;
 	unsigned offset = rule11_a.second;
 	bool rule6_accepts = (svec[index+offset] == "tausend");
 	if (rule11_accepts && rule6_accepts)
-		return true;
+		return make_pair(true, offset+1);
 	
 	// checking rule 9 and 6
 	bool rule9_accepts = rule9(svec, index);
 	rule6_accepts = (svec[index+2] == "tausend");
-	if (rule9_accepts && rule6_accepts)
-		return true;
+	if (rule9_accepts && rule6_accepts) {
+		offset = 3;
+		return make_pair(true, offset);
+	}
 
 	// checking rule 7 and 6
 	bool rule7_accepts = rule7(svec, index);
 	rule6_accepts = (svec[index+2] == "tausend");
-	if (rule7_accepts && rule6_accepts)
-		return true;
+	if (rule7_accepts && rule6_accepts) {
+		offset = 3;
+		return make_pair(true, offset);
+	}
 
 	// checking rule 1 and 6
 	bool rule1_accepts = rule1(svec, index);
 	rule6_accepts = (svec[index+1] == "tausend");
-	if (rule1_accepts && rule6_accepts)
-		return true;
+	if (rule1_accepts && rule6_accepts) {
+		offset = 2;
+		return make_pair(true, offset);
+	}
 
 	// checking rule 2 and 6
 	bool rule2_accepts = false;
 	if (is_in_z2(svec[index])) {
 		rule2_accepts = true;
 		rule6_accepts = (svec[index+1] == "tausend");
+		offset = 2;
 	} else {
 		rule2_accepts = rule2(svec, index);
 		rule6_accepts = (svec[index+2] == "tausend");
+		offset = 3;
 	}
 	if (rule2_accepts && rule6_accepts)
-		return true;
+		return make_pair(true, offset);
 
 	// checking rule 8
 	bool rule8_accepts = rule8(svec, index);
-	rule6_accepts = (svec[index+3] == "tausend");
-	if (rule8_accepts && rule6_accepts)
+	rule6_accepts = (svec[index+4] == "tausend");
+	if (rule8_accepts && rule6_accepts) {
+		offset = 5;
+		return make_pair(true, offset);
+	} else {
+		return make_pair(false, offset);
+	}
+}
+
+bool rule14(const vector<string>& svec, unsigned index) {
+	pair<bool, unsigned> rule13_a = rule13(svec, index);
+	bool rule13_accepts = rule13_a.first;
+	unsigned offset = rule13_a.second;
+	bool rule6_accepts = (svec[index] == "tausend");
+	bool rule6_or_rule13_accepts = rule13_accepts || rule6_accepts;
+
+	if (rule6_or_rule13_accepts  == false)
+		return false;
+
+	// checking rule 11
+	pair<bool, unsigned> rule11_a;
+	bool rule11_accepts = false;
+	if (rule6_accepts) {
+		rule11_a = rule11(svec, index+1);
+		rule11_accepts = rule11_a.first;
+	} else { // rule 13 accepts
+		rule11_a = rule11(svec, index+offset);
+		rule11_accepts = rule11_a.first;
+	}
+	if (rule11_accepts && rule6_or_rule13_accepts)
+		return true;
+
+	// checking rule 9
+	bool rule9_accepts = false;
+	if (rule6_accepts) { // offset is 1
+		rule9_accepts = rule9(svec, index+1);
+	} else { // offset is offset
+		rule9_accepts = rule9(svec, offset);
+	}
+	if (rule9_accepts && rule6_or_rule13_accepts)
+		return true;
+
+	// checking rule 7
+	bool rule7_accepts = false;
+	if (rule6_accepts) { // offset is 1
+		rule7_accepts = rule7(svec, index+1);
+	} else { // offset is offset
+		rule7_accepts = rule7(svec, index+offset);
+	}
+	if (rule7_accepts && rule6_or_rule13_accepts)
+		return true;
+
+	// checking rule 1
+	bool rule1_accepts = false;
+	if (rule6_accepts) { // offset is 1
+		rule1_accepts = rule1(svec, index+1);
+	} else { // offset is offset
+		rule1_accepts = rule1(svec, index+offset);
+	}
+	if (rule1_accepts && rule6_or_rule13_accepts)
+		return true;
+
+	// checking rule 2
+	bool rule2_accepts = false;
+	if (rule6_accepts) { // offset is 1
+		if (is_in_z2(svec[index+1]))
+			rule2_accepts = true;
+		else
+			rule2_accepts = rule2(svec, index+1);
+	} else { // offset is offset
+		if (is_in_z2(svec[index+offset]))
+			rule2_accepts = true;
+		else
+			rule2_accepts = rule2(svec, index+offset);
+	}
+	if (rule2_accepts && rule6_or_rule13_accepts)
+		return true;
+
+	// checking rule 8
+	bool rule8_accepts = false;
+	if (rule6_accepts) { // offset is 1
+		rule8_accepts = rule8(svec, index+1);
+	} else { // offset is offset
+		rule8_accepts = rule8(svec, index+offset);
+	}
+	if (rule8_accepts && rule6_or_rule13_accepts)
 		return true;
 	else
 		return false;
@@ -521,8 +612,6 @@ pair<bool, unsigned> rule13(const vector<string>& svec, unsigned index) {
 
 int main(int argc, char** argv) {
 	// TODO: function that chooses a starting rule
-	// TODO: regla 14
-	// TODO: fix FIXME
 	string word;
 
 	cout << "Enter a number in German: ";
@@ -534,7 +623,7 @@ int main(int argc, char** argv) {
 	   cout << word_parts[i] << " ";
 	cout << endl;
 
-	cout << "Word accepted? " << rule12(word_parts, 0) << endl;
+	cout << "Word accepted? " << rule14(word_parts, 0) << endl;
 
 	return 0;
 }
