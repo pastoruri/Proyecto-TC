@@ -202,11 +202,12 @@ vector<string> z5 = {"hundert"};
 vector<string> z6 = {"tausend"};
 
 bool is_in_z2(const string& w) {
-	bool matched = false;
-	for (auto& s : z2)
-		if (s == w)
-			matched = true;
-	return matched;
+	for (auto& s : z2) {
+		if (s == w) {
+			return true;
+		}
+	}
+	return false;
 }
 
 bool rule1(const vector<string>& svec, unsigned index) {
@@ -610,8 +611,13 @@ bool rule14(const vector<string>& svec, unsigned index) {
 		return false;
 }
 
+bool analyze(const vector<string>& svec, unsigned index) {
+	// TODO: analyze string and call the according rules
+	rule1(svec, index)
+}
+
 int main(int argc, char** argv) {
-	// TODO: function that chooses a starting rule
+	// TODO: regla de identificación de errores
 	string word;
 
 	cout << "Enter a number in German: ";
@@ -623,7 +629,7 @@ int main(int argc, char** argv) {
 	   cout << word_parts[i] << " ";
 	cout << endl;
 
-	cout << "Word accepted? " << rule14(word_parts, 0) << endl;
+	cout << "Word accepted? " << analyze(word_parts, 0) << endl;
 
 	return 0;
 }
