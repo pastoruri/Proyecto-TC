@@ -3,6 +3,9 @@
 #include <string>
 #include <utility>
 
+int contador = 2;
+int fin = 0;
+
 using namespace std;
 
 struct scanner {
@@ -204,6 +207,7 @@ vector<string> z6 = {"tausend"};
 bool is_in_z2(const string& w) {
 	for (auto& s : z2) {
 		if (s == w) {
+			contador = 1;
 			return true;
 		}
 	}
@@ -231,8 +235,10 @@ bool rule2(const vector<string>& svec, unsigned index) {
 		if (word == s)
 			word_matched = true;
 
-	if (word_matched && next_word == "zehn")
+	if (word_matched && next_word == "zehn"){
+		contador = 2;
 		return true;
+	}
 	else
 		return false;
 }
@@ -264,10 +270,14 @@ bool rule7(const vector<string>& svec, unsigned index) {
 	string curr_word = svec[index];
 	string next_word = svec[index+1];
 
-	if (curr_word == "drei")
+	if (curr_word == "drei"){
+		contador = 2;
 		return rule72(svec, index);
-	else
+	}
+	else{
+		contador = 2;
 		return rule71(svec, index);
+	}
 }
 
 bool ruleU(const vector<string>& svec, unsigned index) {
@@ -277,8 +287,10 @@ bool ruleU(const vector<string>& svec, unsigned index) {
 
 	word_matched = rule1(svec, index);
 
-	if (word_matched && next_word == "und")
+	if (word_matched && next_word == "und"){
+		contador = 2;
 		return true;
+	}
 	else
 		return false;
 }
@@ -295,8 +307,10 @@ bool rule9(const vector<string>& svec, unsigned index) {
 		if (word == next_word)
 			word_matched2 = true;
 
-	if (word_matched1 && word_matched2)
+	if (word_matched1 && word_matched2){
+		contador = 2;
 		return true;
+	}
 	else
 		return false;
 }
@@ -307,8 +321,10 @@ bool rule8(const vector<string>& svec, unsigned index) {
 
 	rule7_accepted = rule7(svec, index+2);
 
-	if (ruleU_accepted && rule7_accepted)
+	if (ruleU_accepted && rule7_accepted){
+		contador = 4;
 		return true;
+	}
 	else 
 		return false;
 }
@@ -327,12 +343,14 @@ pair<bool, unsigned> rule10(const vector<string>& svec, unsigned index) {
 	if (should_use_rule2) {
 		rule2_accepted = rule2(svec, index);
 		if (svec[index+2] == "hundert") {
+			contador = 3;
 			next_word_in_z5 = true;
 			offset = 3;
 		}
 	} else {
 		rule2_accepted = true;
 		if (svec[index+1] == "hundert") {
+			contador = 2;
 			next_word_in_z5 = true;
 			offset = 2;
 		}
@@ -373,6 +391,7 @@ pair<bool, unsigned> rule11(const vector<string>& svec, unsigned index) {
 
 	if (rule1_accepts && rule5_or_rule9_accepts) {
 		++offset;
+		contador = offset;
 		return make_pair(true, offset);
 	}
 
@@ -399,8 +418,10 @@ pair<bool, unsigned> rule11(const vector<string>& svec, unsigned index) {
         }
 	}
 	
-	if (rule2_accepts && rule5_or_rule9_accepts)
+	if (rule2_accepts && rule5_or_rule9_accepts){
+		contador = offset;
 		return make_pair(true, offset);
+	}
 
 	// at this point, rule5 or rule9 accepts, but rule2 doesn't
 	// checking rule 8
@@ -414,6 +435,7 @@ pair<bool, unsigned> rule11(const vector<string>& svec, unsigned index) {
 
 	if (rule8_accepts && rule5_or_rule9_accepts) {
 		offset += 4;
+		contador = offset;
 		return make_pair(true, offset);
 	}
 
@@ -429,6 +451,7 @@ pair<bool, unsigned> rule11(const vector<string>& svec, unsigned index) {
 	
 	if (rule7_accepts && rule5_or_rule9_accepts) {
 		offset += 2;
+		contador = offset;
 		return make_pair(true, offset);
 	} else {
 		return make_pair(false, offset);
@@ -445,28 +468,39 @@ bool rule12(const vector<string>& svec, unsigned index) {
 
 	// checking rule 1
 	bool rule1_accepts = rule1(svec, index+offset);
-	if (rule10_accepts && rule1_accepts)
+	if (rule10_accepts && rule1_accepts){
+		contador = rule10_a.first + 1;
 		return true;
+	}
 
 	// checking rule 2
 	bool rule2_accepts = false;
+	int returnz2 = 0;
 	if (is_in_z2(svec[index+offset])) {
+		returnz2 = 1;
 		rule2_accepts = true;		
 	} else {
+		returnz2 = 2;
 		rule2_accepts = rule2(svec, index+offset);
 	}
-	if (rule10_accepts && rule2_accepts)
+	if (rule10_accepts && rule2_accepts){
+		contador = rule10_a.first + returnz2;
 		return true;
+	}
 
 	// checking rule 8
 	bool rule8_accepts = rule8(svec, index+offset);
-	if (rule10_accepts && rule8_accepts)
+	if (rule10_accepts && rule8_accepts){
+		contador = rule10_a.first + 4;
 		return true;
+	}
 
 	// checking rule 7
 	bool rule7_accepts = rule7(svec, index+offset);
-	if (rule10_accepts && rule7_accepts)
+	if (rule10_accepts && rule7_accepts){
+		contador = rule10_a.first + 2;
 		return true;
+	}
 	else
 		return false;
 }
@@ -477,14 +511,17 @@ pair<bool, unsigned> rule13(const vector<string>& svec, unsigned index) {
 	bool rule11_accepts = rule11_a.first;
 	unsigned offset = rule11_a.second;
 	bool rule6_accepts = (svec[index+offset] == "tausend");
-	if (rule11_accepts && rule6_accepts)
+	if (rule11_accepts && rule6_accepts){
+		contador = offset+1;
 		return make_pair(true, offset+1);
+	}
 	
 	// checking rule 9 and 6
 	bool rule9_accepts = rule9(svec, index);
 	rule6_accepts = (svec[index+2] == "tausend");
 	if (rule9_accepts && rule6_accepts) {
 		offset = 3;
+		contador = offset;
 		return make_pair(true, offset);
 	}
 
@@ -493,6 +530,7 @@ pair<bool, unsigned> rule13(const vector<string>& svec, unsigned index) {
 	rule6_accepts = (svec[index+2] == "tausend");
 	if (rule7_accepts && rule6_accepts) {
 		offset = 3;
+		contador = offset;
 		return make_pair(true, offset);
 	}
 
@@ -501,6 +539,7 @@ pair<bool, unsigned> rule13(const vector<string>& svec, unsigned index) {
 	rule6_accepts = (svec[index+1] == "tausend");
 	if (rule1_accepts && rule6_accepts) {
 		offset = 2;
+		contador = offset;
 		return make_pair(true, offset);
 	}
 
@@ -515,14 +554,17 @@ pair<bool, unsigned> rule13(const vector<string>& svec, unsigned index) {
 		rule6_accepts = (svec[index+2] == "tausend");
 		offset = 3;
 	}
-	if (rule2_accepts && rule6_accepts)
+	if (rule2_accepts && rule6_accepts){
+		contador = offset;
 		return make_pair(true, offset);
+	}
 
 	// checking rule 8
 	bool rule8_accepts = rule8(svec, index);
 	rule6_accepts = (svec[index+4] == "tausend");
 	if (rule8_accepts && rule6_accepts) {
 		offset = 5;
+		contador = offset;
 		return make_pair(true, offset);
 	} else {
 		return make_pair(false, offset);
@@ -532,12 +574,24 @@ pair<bool, unsigned> rule13(const vector<string>& svec, unsigned index) {
 bool rule14(const vector<string>& svec, unsigned index) {
 	pair<bool, unsigned> rule13_a = rule13(svec, index);
 	bool rule13_accepts = rule13_a.first;
-	unsigned offset = rule13_a.second;
 	bool rule6_accepts = (svec[index] == "tausend");
+
+	unsigned returnz6 = 1;
+	unsigned offset = rule13_a.second;
+
+	unsigned final = 0;
+
+	if (rule13_accepts){
+		final = offset;
+	} else {
+		final = 1;
+	}
+
 	bool rule6_or_rule13_accepts = rule13_accepts || rule6_accepts;
 
-	if (rule6_or_rule13_accepts  == false)
+	if (rule6_or_rule13_accepts  == false){
 		return false;
+	}
 
 	// checking rule 11
 	pair<bool, unsigned> rule11_a;
@@ -549,8 +603,10 @@ bool rule14(const vector<string>& svec, unsigned index) {
 		rule11_a = rule11(svec, index+offset);
 		rule11_accepts = rule11_a.first;
 	}
-	if (rule11_accepts && rule6_or_rule13_accepts)
+	if (rule11_accepts && rule6_or_rule13_accepts){
+		contador = final + rule11_a.second;
 		return true;
+	}
 
 	// checking rule 9
 	bool rule9_accepts = false;
@@ -559,8 +615,10 @@ bool rule14(const vector<string>& svec, unsigned index) {
 	} else { // offset is offset
 		rule9_accepts = rule9(svec, offset);
 	}
-	if (rule9_accepts && rule6_or_rule13_accepts)
+	if (rule9_accepts && rule6_or_rule13_accepts){
+		contador = final + 2;
 		return true;
+	}
 
 	// checking rule 7
 	bool rule7_accepts = false;
@@ -569,8 +627,10 @@ bool rule14(const vector<string>& svec, unsigned index) {
 	} else { // offset is offset
 		rule7_accepts = rule7(svec, index+offset);
 	}
-	if (rule7_accepts && rule6_or_rule13_accepts)
+	if (rule7_accepts && rule6_or_rule13_accepts){
+		contador = final + 2;
 		return true;
+	}
 
 	// checking rule 1
 	bool rule1_accepts = false;
@@ -579,24 +639,37 @@ bool rule14(const vector<string>& svec, unsigned index) {
 	} else { // offset is offset
 		rule1_accepts = rule1(svec, index+offset);
 	}
-	if (rule1_accepts && rule6_or_rule13_accepts)
+	if (rule1_accepts && rule6_or_rule13_accepts){
+		contador = final + 1;
 		return true;
+	}
 
 	// checking rule 2
+	unsigned rule2_cont = 0;
 	bool rule2_accepts = false;
 	if (rule6_accepts) { // offset is 1
-		if (is_in_z2(svec[index+1]))
+		if (is_in_z2(svec[index+1])){
+			rule2_cont = 1;
 			rule2_accepts = true;
-		else
+		}
+		else{
+			rule2_cont = 2;
 			rule2_accepts = rule2(svec, index+1);
+		}
 	} else { // offset is offset
-		if (is_in_z2(svec[index+offset]))
+		if (is_in_z2(svec[index+offset])){
+			rule2_cont = 1;
 			rule2_accepts = true;
-		else
+		}
+		else{
+			rule2_cont = 2;
 			rule2_accepts = rule2(svec, index+offset);
+		}
 	}
-	if (rule2_accepts && rule6_or_rule13_accepts)
+	if (rule2_accepts && rule6_or_rule13_accepts){
+		contador = final + rule2_cont;
 		return true;
+	}
 
 	// checking rule 8
 	bool rule8_accepts = false;
@@ -605,15 +678,82 @@ bool rule14(const vector<string>& svec, unsigned index) {
 	} else { // offset is offset
 		rule8_accepts = rule8(svec, index+offset);
 	}
-	if (rule8_accepts && rule6_or_rule13_accepts)
+	if (rule8_accepts && rule6_or_rule13_accepts){
+		contador = final + 4;
 		return true;
+	}
 	else
 		return false;
 }
 
 bool analyze(const vector<string>& svec, unsigned index) {
-	// TODO: analyze string and call the according rules
 
+	while (fin < svec.size()){
+		//bool z2f = false, z7f = false, z8f = false, z9f = false, z10f = false, z11f = false, z12f = false, z13f = false, z14f = false, uf = false;
+		
+		if ( is_in_z2(svec[fin]) ){
+			fin += contador;
+			goto End;
+		}
+
+		if ( rule2(svec, fin) ){
+			fin += contador;
+			goto End;
+		} 
+
+		if ( rule7(svec, fin) ){
+			fin += contador;
+			goto End;
+		} 
+
+		if ( rule8(svec, fin) ){
+			fin += contador;
+			goto End;
+		}
+
+		if ( rule9(svec, fin) ){
+			fin += contador;
+			goto End;
+		}
+
+		if ( rule10(svec, fin).first ){
+			fin += rule10(svec, fin).second;
+			goto End;
+		}
+
+		if ( rule11(svec, fin).first ){
+			fin += rule11(svec, fin).second;
+			goto End;
+		}
+
+		if ( rule12(svec, fin) ){
+			fin += contador;
+			goto End;
+		}
+
+		if ( rule13(svec, fin).first  ){
+			fin += rule13(svec, fin).second;
+			goto End;
+		}
+
+		if ( rule14(svec, fin) ){
+			fin += contador;
+			goto End;
+		}
+
+		if ( ruleU(svec, fin) ){
+			fin += contador;
+			goto End;
+		}
+
+		return false;
+
+		End:
+			fin = fin;
+	}
+
+	return true;
+	
 }
 
 int main(int argc, char** argv) {
@@ -629,7 +769,7 @@ int main(int argc, char** argv) {
 	   cout << word_parts[i] << " ";
 	cout << endl;
 
-	cout << "Word accepted? " << (rule14(word_parts, 0) ? "Yes" : "No") << endl;
+	cout << "Word accepted? " << (analyze(word_parts, 0) ? "Yes" : "No") << endl;
 
 	return 0;
 }
