@@ -689,8 +689,7 @@ bool rule14(const vector<string>& svec, unsigned index) {
 bool analyze(const vector<string>& svec, unsigned index) {
 
 	while (fin < svec.size()){
-		//bool z2f = false, z7f = false, z8f = false, z9f = false, z10f = false, z11f = false, z12f = false, z13f = false, z14f = false, uf = false;
-		
+		cout << "fin: " << fin << ", svec: " << svec.size() << endl;
 		if ( is_in_z2(svec[fin]) ){
 			fin += contador;
 			goto End;
@@ -732,7 +731,7 @@ bool analyze(const vector<string>& svec, unsigned index) {
 		}
 
 		if ( rule13(svec, fin).first  ){
-			fin += rule13(svec, fin).second;
+			fin += contador;
 			goto End;
 		}
 
@@ -749,7 +748,7 @@ bool analyze(const vector<string>& svec, unsigned index) {
 		return false;
 
 		End:
-			fin = fin;
+			fin++;
 	}
 
 	return true;
@@ -764,7 +763,6 @@ int main(int argc, char** argv) {
 	cin >> word;
 
 	vector<string> word_parts = scanner::decode_word(word);
-
 	for (int i = 0; i < word_parts.size(); i++)
 	   cout << word_parts[i] << " ";
 	cout << endl;
