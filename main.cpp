@@ -689,7 +689,6 @@ bool rule14(const vector<string>& svec, unsigned index) {
 bool analyze(const vector<string>& svec, unsigned index) {
 
 	while (fin < svec.size()){
-		cout << "fin: " << fin << ", svec: " << svec.size() << endl;
 		if ( is_in_z2(svec[fin]) ){
 			fin += contador;
 			goto End;
