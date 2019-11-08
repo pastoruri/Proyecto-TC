@@ -13,13 +13,20 @@ struct scanner {
     static vector<string> decode_word(string word) {
         vector<string> decoded_word;
         decode_aux(word, decoded_word);
-        int size_count = 0;
-        for (int i = 0; i < decoded_word.size(); ++i) {
-            size_count += decoded_word[i].size();
+        string test;
+        for(int i =0; i<decoded_word.size();i++){
+            test += decoded_word[i];
         }
-        if (size_count != word.size()) {
-            cout << "There's a typo somewhere."<<endl;
+        Here:
+        if(test != word){
+            decoded_word.pop_back();
+            test.clear();
+            for(int i =0; i<decoded_word.size();i++){
+                test += decoded_word[i];
+            }
+            goto Here;
         }
+
         return decoded_word;
     }
    static void decode_aux(string word, vector<string>& decoded_word) {
